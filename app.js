@@ -273,7 +273,7 @@
     const { data, error } = await sb.functions.invoke('admin-users', { body });
     if (error) {
       let msg = error.message;
-      try { const j = await error.context.json(); if (j && j.error) msg = j.error; } catch (_) { /* ignore */ }
+      try { const r = error.context; const j = await r.json(); msg = j.error || j.message || msg; if (!j.error) msg += ' (HTTP ' + r.status + ')'; } catch (_) { /* ignore */ }
       throw new Error(msg);
     }
     if (data && data.error) throw new Error(data.error);
